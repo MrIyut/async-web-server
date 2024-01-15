@@ -183,16 +183,8 @@ void receive_data(struct connection *conn)
 	 * Store message in recv_buffer in struct connection.
 	 */
 	char addressBuffer[64];
-
 	get_peer_address(conn->sockfd, addressBuffer, 64);
-
 	size_t len = BUFSIZ;
-
-	if (len > 20)
-		len = 20;
-	else if (len > 1)
-		len /= 2;
-
 	int recv_len = recv(conn->sockfd, conn->recv_buffer + conn->recv_len, len, MSG_DONTWAIT); // BUFSIZ => len
 
 	if (recv_len <= 0) {
@@ -228,10 +220,6 @@ ssize_t connection_send_data(struct connection *conn)
 
 	while (conn->send_len > 0) {
 		size_t len = conn->send_len;
-
-		if (len > 1)
-			len /= 2;
-
 		ssize_t send_len = send(conn->sockfd, conn->send_buffer, len, MSG_DONTWAIT); // conn->send_len => len
 
 		if (send_len <= 0) {
@@ -261,10 +249,6 @@ enum connection_state connection_send_static(struct connection *conn)
 	/* TODO: Send static data using sendfile(2). */
 	while (conn->file_size > 0) {
 		size_t count = conn->file_size;
-
-		if (count > 32)
-			count /= 2;
-
 		size_t send_len = sendfile(conn->sockfd, conn->fd, NULL, count); // conn->file_size => count
 
 		DIE(send_len < 0, "failed to send file");
