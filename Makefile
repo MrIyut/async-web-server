@@ -30,4 +30,3 @@ clean:
 	-rm -f ../src.zip
 	-rm -f *.o
 	-rm -f aws
-	-rm -f sockop_preload.so
